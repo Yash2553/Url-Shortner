@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3003:3003"             # Expose port 3000 on the host to port 3000 in the container
+    environment:
+      NODE_ENV: development
+      # MONGO_URI: mongodb://mongo:27017/url_shortener  # MongoDB connection string
+      PORT: 3003
+      MONGO_URL: mongodb://mongo:27017/
+      SECRET: great
+      GOOGLE_CLIENT_ID: 128036182354-pce10fvndrft54oabse98vfukooldnl2.apps.googleusercontent.com
+      GOOGLE_CLIENT_SECRET: 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
+      JWT_SECRET: your-very-secure-secret
+
+    depends_on:
+      - mongo                   # Ensure MongoDB starts before the app
+    volumes:
+      - .:/app                  # Optional: Map your project directory for live updates
+      - /app/node_modules       # Prevent node_modules from overwriting
+    restart: always             # Restart the container if it crashes
+
+  mongo:
+    image: mongo:6          # Use the latest stable MongoDB image
+    container_name: mongo
+    ports:
+      - "27017:27017"           # Expose MongoDB on the default port
+    volumes:
+      - mongo_data:/data/db      # Optional: Persist MongoDB data locally
+    # restart: always             # Restart the container if it crashes
+
+volumes:
+  mongo_data:
